@@ -63,7 +63,51 @@ Details worth knowing:
 
 ## Measured on this build
 
-MEASURED_TABLE
+CPU only (4 cores, no GPU), one job at a time. "Match" is cosine similarity to the original identity;
+below the threshold the encoder reads a different person. Every number is re-measured from the saved file
+(photos: reloaded PNG with faces re-detected; video: frames decoded from the encoded mp4).
+
+**Voice** (13.9 s clip, ECAPA, threshold 0.25)
+
+| Strength | Match after | SNR | Time |
+|---|---|---|---|
+| Light | 0.12 | 28.8 dB | 6.1 s |
+| Balanced | 0.11 | 27.6 dB | 5.6 s |
+| Strong | −0.01 | 24.3 dB | 4.2 s |
+
+**Photo** (947×1280, thresholds ArcFace 0.30 / FaceNet 0.50)
+
+| Strength | ArcFace after (after JPEG q90) | FaceNet after | PSNR / SSIM | Time |
+|---|---|---|---|---|
+| Light | 0.17 (0.18) | 0.39 | 39.9 dB / 0.989 | 14.3 s |
+| Balanced | −0.02 (−0.02) | 0.20 | 37.9 dB / 0.982 | 13.4 s |
+| Strong | 0.01 (0.01) | 0.13 | 35.5 dB / 0.967 | 9.1 s |
+
+On two other test photos Balanced left FaceNet at 0.47 and 0.49: under its threshold, but only just.
+
+**Video** (first 5 s, 480p, Balanced unless noted)
+
+| Clip | ArcFace before → after | Frames below threshold | PSNR / SSIM | Time |
+|---|---|---|---|---|
+| Clean talking head, 150 frames | 0.89 → −0.15 | 150 / 150 | 34.9 dB / 0.928 | 62 s |
+| Low-quality clip with head motion, 125 frames | 0.93 → 0.15 | 102 / 125 | 33.0 dB / 0.911 | 95 s |
+| Same clip, Strong + voice track | 0.93 → −0.06 | 121 / 125 | 30.8 dB / 0.863 | 101 s |
+
+On the last run the voice track went 1.00 → 0.07 at 27.6 dB SNR.
+
+**Attack lab** (inswapper_128, same target face): the fake made from the original photo matched the real
+person at 0.79; the fake made from the Balanced shielded photo matched at 0.02.
+
+Thresholds come from `python -m shield.image --calibrate` on 15 photos of 6 people: same person never
+scored below 0.51 (ArcFace) / 0.59 (FaceNet); different people never above 0.17 / 0.45. ECAPA uses
+SpeechBrain's default 0.25.
+
+Not measured: anything on a GPU. The CUDA path (larger step budgets, 4 EOT samples, fp16 autocast, one
+perturbation per video frame) is written but has never been run.
+
+Trade-offs chosen for CPU: photos are downscaled to 1280 px on the long side, 30–40 PGD steps with 2 EOT
+samples; video shares one perturbation across 5 consecutive frames; the allowed change is scaled by local
+texture, so hair, eyes and edges carry more of it than smooth skin.
 
 ## The attack lab
 
@@ -77,8 +121,11 @@ shielded one. It shows both fakes and how closely each matches the real you.
   Transfer to other or commercial systems is not guaranteed and we have not measured it.
 - Heavy compression, rescaling, denoising or deliberate "purification" can weaken the layer.
   The JPEG q90 and encoded-video numbers on the certificate show how much survives mild cases.
-- Stronger settings are more visible. "Invisible" is honest at Light, mostly honest at Balanced, and
-  a trade at Strong; the certificate reports PSNR/SSIM or SNR for every file so you can judge.
+- It is not truly invisible. On photos the change is hard to see at normal size at Light and Balanced
+  and shows as faint texture on skin when you zoom in. On video, where a face fills a small frame, it is
+  visible at Balanced and obvious at Strong. The certificate reports PSNR/SSIM or SNR for every file.
+- Video handles one face (the main one) and can leave some frames recognizable on low-quality or
+  fast-moving clips; the per-frame chart shows exactly which.
 - It protects the file you shield, not photos of you that are already out there.
 - It raises the cost of cloning you. It is not a guarantee.
 

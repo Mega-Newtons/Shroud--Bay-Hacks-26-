@@ -37,7 +37,7 @@ class ShieldError(Exception):
 # eps: L∞ bound. Images: fraction of the 0..1 pixel range. Audio: fraction of the clip's peak amplitude.
 # steps = (GPU, CPU). CPU budgets are sized so a photo finishes in ~10-25 s and a 20 s voice note in < 30 s on 4 cores.
 STRENGTHS = {
-    "light":    dict(img_eps=7 / 255,  img_steps=(60, 30),  aud_eps=0.008, aud_steps=(100, 30), vid_eps=6 / 255,  vid_steps=(20, 4)),
+    "light":    dict(img_eps=7 / 255,  img_steps=(60, 30),  aud_eps=0.010, aud_steps=(100, 36), vid_eps=6 / 255,  vid_steps=(20, 4)),
     "balanced": dict(img_eps=9 / 255,  img_steps=(120, 30), aud_eps=0.012, aud_steps=(160, 36), vid_eps=9 / 255,  vid_steps=(30, 6)),
     "strong":   dict(img_eps=13 / 255, img_steps=(200, 40), aud_eps=0.024, aud_steps=(240, 40), vid_eps=12 / 255, vid_steps=(40, 9)),
 }
