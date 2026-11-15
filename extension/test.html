@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Any website — upload test</title>
+<style>
+@font-face { font-family: "Newsreader"; src: url("fonts/newsreader-normal-300-700.woff2") format("woff2"); font-weight: 300 700; }
+@font-face { font-family: "Plex Sans"; src: url("fonts/plex-sans-normal-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Plex Sans"; src: url("fonts/plex-sans-normal-500.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Plex Mono"; src: url("fonts/plex-mono-normal-400.woff2") format("woff2"); font-weight: 400; }
+:root { --paper: #F3EFE6; --ink: #15171A; --graphite: #5B5E63; --rule: #D8D2C4; --green: #1E5C47; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 18px/1.5 "Plex Sans", sans-serif; padding: 48px; max-width: 880px; }
+.label { font: 400 12px/1.4 "Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--graphite); font-variant-numeric: tabular-nums; }
+h1 { font: 400 48px/1.05 "Newsreader", serif; letter-spacing: -.02em; margin: 16px 0 16px; }
+p { margin: 0 0 32px; max-width: 32em; }
+.pick { display: block; border: 1px dashed var(--graphite); border-radius: 2px; padding: 24px; cursor: pointer; font: 400 28px/1.2 "Newsreader", serif; }
+.pick:hover { border-color: var(--green); border-style: solid; }
+#got { margin-top: 32px; border-top: 1px solid var(--ink); }
+.row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--rule); font: 400 15px/1.4 "Plex Mono", monospace; }
+img, audio { display: block; margin-top: 24px; max-width: 100%; max-height: 420px; border: 1px solid var(--ink); }
+audio { border: 0; }
+@media (max-width: 640px) { body { padding: 16px; } h1 { font-size: 34px; } }
+</style>
+</head>
+<body>
+<span class="label">Upload test · stands in for any website</span>
+<h1>Post a photo or a voice note.</h1>
+<p>This page knows nothing about Shroud. It shows exactly the file it receives from the file picker. With the extension on, that file is the shielded one.</p>
+<label class="pick"><input id="f" type="file" accept="image/*,audio/*" hidden>Choose a file to upload</label>
+<div id="got" hidden></div>
+<script>
+document.getElementById("f").addEventListener("change", (e) => {
+  const f = e.target.files[0], got = document.getElementById("got");
+  if (!f) return;
+  got.hidden = false; got.replaceChildren();
+  const row = (k, v) => { const d = document.createElement("div"); d.className = "row"; const a = document.createElement("span"); a.className = "label"; a.textContent = k; const b = document.createElement("span"); b.textContent = v; d.append(a, b); got.appendChild(d); };
+  row("File the site received", f.name); row("Type", f.type || "unknown"); row("Size", (f.size / 1024).toFixed(0) + " KB");
+  row("Received at", new Date().toLocaleTimeString("en-GB"));
+  const el = document.createElement(f.type.startsWith("audio/") ? "audio" : "img");
+  el.src = URL.createObjectURL(f); if (el.tagName === "AUDIO") el.controls = true;
+  got.appendChild(el);
+});
+</script>
+</body>
+</html>

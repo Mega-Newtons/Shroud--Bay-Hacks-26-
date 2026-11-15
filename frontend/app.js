@@ -65,10 +65,16 @@
   }));
   $("decoy").addEventListener("change", (e) => {
     state.decoy = e.target.files[0] || null;
-    $("decoy-name").textContent = state.decoy ? state.decoy.name : "Choose a face or voice to point at";
+    $("decoy-name").textContent = state.decoy ? `Decoy: ${state.decoy.name}` : "Add a decoy identity";
     $("decoy-clear").hidden = !state.decoy;
   });
   $("decoy-clear").addEventListener("click", () => { $("decoy").value = ""; $("decoy").dispatchEvent(new Event("change")); });
+
+  $("opt-audio").addEventListener("click", (e) => {
+    state.shieldAudio = !state.shieldAudio;
+    e.target.setAttribute("aria-pressed", String(state.shieldAudio)); e.target.classList.toggle("quiet", !state.shieldAudio);
+    e.target.textContent = state.shieldAudio ? "Video sound: shield the voice too" : "Video sound: leave as is";
+  });
 
   const drop = $("drop");
   $("file").addEventListener("change", (e) => { if (e.target.files[0]) start(e.target.files[0]); e.target.value = ""; });
@@ -143,6 +149,7 @@
     const body = new FormData();
     body.append("file", file, file.name); body.append("strength", state.strength);
     if (state.decoy) body.append("decoy", state.decoy, state.decoy.name);
+    if (kind === "video" && state.shieldAudio) body.append("shield_audio", "1");
     try {
       const { job_id } = await api(`/api/protect/${kind}`, { method: "POST", body });
       await poll(job_id);

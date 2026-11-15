@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: "Newsreader"; src: url("fonts/newsreader-normal-300-700.woff2") format("woff2"); font-weight: 300 700; }
+@font-face { font-family: "Plex Sans"; src: url("fonts/plex-sans-normal-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Plex Sans"; src: url("fonts/plex-sans-normal-500.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Plex Mono"; src: url("fonts/plex-mono-normal-400.woff2") format("woff2"); font-weight: 400; }
+:root { --paper: #F3EFE6; --ink: #15171A; --graphite: #5B5E63; --rule: #D8D2C4; --green: #1E5C47; --oxblood: #8A2B22; }
+* { box-sizing: border-box; }
+body { margin: 0; width: 304px; background: var(--paper); color: var(--ink); font: 400 15px/1.45 "Plex Sans", sans-serif; padding: 16px; }
+header { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
+header svg { width: 32px; height: 32px; }
+header svg path { fill: none; stroke: var(--green); stroke-width: .6px; vector-effect: non-scaling-stroke; }
+h1 { font: 500 24px/1 "Newsreader", serif; margin: 0; flex: 1; }
+.label { font: 400 11px/1.4 "Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--graphite); }
+.field { display: grid; gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--ink); border-radius: 2px; }
+.seg button { font: 500 13px/1 "Plex Sans", sans-serif; padding: 9px 4px; background: none; border: 0; color: var(--ink); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--ink); }
+.seg button[aria-checked="true"] { background: var(--ink); color: var(--paper); }
+input[type=text] { font: 400 13px/1 "Plex Mono", monospace; padding: 9px 8px; border: 1px solid var(--ink); border-radius: 2px; background: var(--paper); color: var(--ink); width: 100%; }
+input[type=text]:focus-visible, button:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+#state { padding-top: 12px; color: var(--ink); }
+#state.down { color: var(--oxblood); }
+p { margin: 12px 0 0; color: var(--graphite); font-size: 13px; }
+</style>
+</head>
+<body>
+<header><svg id="mark" viewBox="-20 -20 40 40" aria-hidden="true"></svg><h1>Shroud</h1><span class="label">Uploads</span></header>
+<div class="field">
+  <span class="label">Shield files as I upload them</span>
+  <div class="seg" id="enabled" role="radiogroup"><button data-v="on" role="radio">On</button><button data-v="off" role="radio">Off</button></div>
+</div>
+<div class="field">
+  <span class="label">Strength</span>
+  <div class="seg" id="strength" role="radiogroup"><button data-v="light" role="radio">Light</button><button data-v="balanced" role="radio">Balanced</button><button data-v="strong" role="radio">Strong</button></div>
+</div>
+<div class="field">
+  <label class="label" for="backend">Local server</label>
+  <input id="backend" type="text" spellcheck="false">
+</div>
+<div id="state" class="label">Checking the server</div>
+<p>Photos and audio you attach on any site are shielded on this machine first. Nothing is sent anywhere else.</p>
+<script src="popup.js"></script>
+</body>
+</html>

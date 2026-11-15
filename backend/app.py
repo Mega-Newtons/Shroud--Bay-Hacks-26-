@@ -166,4 +166,6 @@ async def faceswap(job_id: str = Form(...), target: UploadFile | None = File(Non
     return {**out["scores"], **{k: f"/api/files/{job_id}/{Path(v).name}?t={int(time.time())}" for k, v in out["files"].items()}}
 
 
+# The extension's upload test page (stands in for "any website" in the demo): http://localhost:8000/ext/test.html
+app.mount("/ext", StaticFiles(directory=ROOT / "extension", html=True), name="extension")
 app.mount("/", StaticFiles(directory=ROOT / "frontend", html=True), name="frontend")

@@ -104,4 +104,5 @@ def files(jid: str, name: str):
     return FileResponse(p)
 
 
+app.mount("/ext", StaticFiles(directory=ROOT / "extension", html=True), name="extension")
 app.mount("/", StaticFiles(directory=ROOT / "frontend", html=True), name="frontend")

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shroud — protection against deepfakes</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -51,10 +52,11 @@
           </div>
         </div>
         <div class="field">
-          <span class="label">Decoy identity · optional</span>
+          <span class="label">Options</span>
           <div class="text-actions">
-            <label class="text-btn"><input id="decoy" type="file" accept="image/*,audio/*" hidden><span id="decoy-name">Choose a face or voice to point at</span></label>
+            <label class="text-btn"><input id="decoy" type="file" accept="image/*,audio/*" hidden><span id="decoy-name">Add a decoy identity</span></label>
             <button id="decoy-clear" class="text-btn quiet" type="button" hidden>Remove</button>
+            <button id="opt-audio" class="text-btn quiet" type="button" aria-pressed="false">Video sound: leave as is</button>
           </div>
         </div>
       </div>

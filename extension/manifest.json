@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Shroud",
+  "version": "0.1.0",
+  "description": "Shields photos and voice notes against deepfake tools at the moment you upload them. Runs against your local Shroud server.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost/*", "http://127.0.0.1/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Shroud", "default_popup": "popup.html" },
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["content.js"], "run_at": "document_start", "all_frames": true }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["fonts/*.woff2"], "matches": ["<all_urls>"] }
+  ]
+}
