@@ -1,0 +1,14 @@
+# Shroud core dependencies (Python 3.11). Every line is justified; nothing else is needed at runtime.
+torch==2.5.1            # autograd + PGD, all transforms/metrics are written in torch
+torchaudio==2.5.1       # only torchaudio.functional.resample (differentiable) and what speechbrain imports
+torchvision==0.20.1     # required by facenet-pytorch (MTCNN nms / ops) and onnx2torch
+numpy                   # WAV <-> array, Umeyama alignment
+Pillow                  # image I/O + JPEG round-trip
+speechbrain==1.0.3      # ECAPA-TDNN speaker encoder (the voice identity model we attack)
+onnx                    # read InsightFace ArcFace .onnx
+onnx2torch              # convert ArcFace .onnx to a differentiable torch module (no onnxruntime)
+fastapi                 # backend API
+uvicorn                 # ASGI server
+python-multipart        # multipart uploads for FastAPI
+# facenet-pytorch is installed separately with --no-deps (it pins old torch/numpy/Pillow):
+#   pip install --no-deps facenet-pytorch==2.6.0   -> MTCNN detector + InceptionResnetV1 (vggface2)
