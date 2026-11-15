@@ -188,6 +188,8 @@ h2 { font: 400 var(--t-h2)/1.1 var(--serif); letter-spacing: -.015em; }
 .match-cell { display: flex; flex-direction: column; gap: var(--s1); border-top: 1px solid var(--ink); padding-top: var(--s1); }
 .numeral { font: 400 var(--t-num)/.95 var(--serif); letter-spacing: -.03em; font-variant-numeric: tabular-nums lining-nums; }
 .numeral-after { color: var(--green); }
+.numeral.neg, .ro-num.neg { letter-spacing: -.05em; margin-left: -.06em; }
+.numeral.neg { font-size: calc(var(--t-num) * .86); line-height: 1.1; }
 .numeral-after.fail { color: var(--oxblood); }
 
 .stamp {

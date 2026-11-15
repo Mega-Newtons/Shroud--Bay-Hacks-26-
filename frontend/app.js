@@ -6,7 +6,7 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const INK = css("--ink"), GREEN = css("--green"), PAPER = css("--paper"), GRAPHITE = css("--graphite");
-  const fmt = (v, d = 2) => (v == null || Number.isNaN(v) ? "—" : Number(v).toFixed(d));
+  const fmt = (v, d = 2) => (v == null || Number.isNaN(v) ? "—" : Number(v).toFixed(d).replace("-", "−"));   // true minus sign
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
   const state = { strength: "balanced", decoy: null, busy: false, job: null, lastImageJob: null, lab: false, raf: 0 };
@@ -177,7 +177,7 @@
       if (j.total_steps) $("ro-step").textContent = `${j.step}/${j.total_steps}`;
       if (s.before != null && !trail.length) trail.push(s.before);
       if (cur != null) {
-        countTo($("ro-sim"), cur, 280);
+        countTo($("ro-sim"), cur, 280); $("ro-sim").parentElement.classList.toggle("neg", cur < 0);
         $("ro-sim").parentElement.classList.toggle("below", s.threshold != null && cur < s.threshold);
         if (trail.length && trail[trail.length - 1] - cur >= 0.14) trail.push(cur);   // keep the big drops
         const mid = trail.length > 1 ? [trail[trail.length - 1]] : [];   // start → last big drop → now
@@ -218,7 +218,7 @@
     // headline numerals
     const before = $("c-before"), after = $("c-after");
     before.textContent = fmt(s.before); delete after.dataset.v; after.dataset.v = s.before;
-    after.classList.toggle("fail", !ok);
+    after.classList.toggle("fail", !ok); after.classList.toggle("neg", s.after < 0);
     countTo(after, s.after, 900);
 
     // scale bar 0..1 with the threshold tick
