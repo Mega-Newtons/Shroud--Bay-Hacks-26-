@@ -18,7 +18,7 @@ from . import image as im
 from .common import DEVICE, MODELS, ROOT, ShieldError, cos, gaussian_blur
 
 SWAPPER = MODELS / "inswapper_128.onnx"
-DEFAULT_TARGETS = [ROOT / "samples" / "lab_target.jpg", ROOT / "samples" / "fn_bradley_cooper.jpg"]
+DEFAULT_TARGETS = [ROOT / "samples" / "lab_target.jpg"]
 _M: dict = {}
 
 

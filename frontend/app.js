@@ -410,7 +410,7 @@
   function refreshLab() {
     const btn = $("lab-run"), note = $("lab-note");
     if (!state.lab) { btn.disabled = true; note.textContent = "Face swapper not installed on this server"; return; }
-    btn.disabled = !state.lastImageJob; note.textContent = state.lastImageJob ? "Runs locally, a few seconds" : "Shield a photo first";
+    btn.disabled = !state.lastImageJob; note.textContent = state.lastImageJob ? "Runs on this machine" : "Shield a photo first";
   }
   $("lab-run").addEventListener("click", async () => {
     const btn = $("lab-run"), note = $("lab-note"); btn.disabled = true; note.textContent = "Swapping faces";

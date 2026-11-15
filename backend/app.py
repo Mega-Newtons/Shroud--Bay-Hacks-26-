@@ -63,7 +63,7 @@ def run(job: dict, src: Path, decoy: Path | None, shield_audio: bool) -> None:
     dst, orig = d / f"shielded.{ext}", d / f"original.{ext}"
     with GPU_LOCK:
         t0 = time.time()
-        job.update(status="running", phase="preparing")
+        job.update(status="running", phase="preparing", _t0=t0)
 
         def on_progress(p: dict) -> None:
             # p comes straight from the PGD loop: phase, step, total_steps, current_similarity, before, threshold
@@ -137,7 +137,10 @@ async def protect(kind: str, file: UploadFile = File(...), strength: str = Form(
 def get_job(jid: str):
     if jid not in JOBS:
         raise HTTPException(404, "Unknown job.")
-    return JOBS[jid]
+    job = JOBS[jid]
+    if job["status"] == "running" and "_t0" in job:      # keep the clock moving between progress callbacks
+        job["elapsed_s"] = round(time.time() - job["_t0"], 1)
+    return {k: v for k, v in job.items() if not k.startswith("_")}
 
 
 @app.get("/api/files/{jid}/{name}")

@@ -80,6 +80,9 @@ def models(lab: bool) -> None:
     if lab:  # Attack lab: the identity-conditioned face swapper used by most open-source swap tools.
         fetch("https://github.com/facefusion/facefusion-assets/releases/download/models-3.0.0/inswapper_128.onnx",
               MODELS / "inswapper_128.onnx")
+        # Default target face for the attack lab (facenet-pytorch's public test image). Replace with any photo.
+        fetch("https://raw.githubusercontent.com/timesler/facenet-pytorch/master/data/test_images/bradley_cooper/1.jpg",
+              ROOT / "samples" / "lab_target.jpg")
 
 
 if __name__ == "__main__":
