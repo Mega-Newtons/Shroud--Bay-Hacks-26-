@@ -406,6 +406,7 @@
   }
 
   /* ——— attack lab ——— */
+  $("lab-target-file").addEventListener("change", (e) => { $("lab-target-name").textContent = e.target.files[0] ? `Target: ${e.target.files[0].name}` : "Use a different target face"; });
   function refreshLab() {
     const btn = $("lab-run"), note = $("lab-note");
     if (!state.lab) { btn.disabled = true; note.textContent = "Face swapper not installed on this server"; return; }
@@ -415,6 +416,7 @@
     const btn = $("lab-run"), note = $("lab-note"); btn.disabled = true; note.textContent = "Swapping faces";
     try {
       const body = new FormData(); body.append("job_id", state.lastImageJob.job_id);
+      const tf = $("lab-target-file").files[0]; if (tf) body.append("target", tf, tf.name);
       const r = await api("/api/lab/faceswap", { method: "POST", body });
       $("lab-target").src = r.target_url; $("lab-a").src = r.swap_original_url; $("lab-b").src = r.swap_shielded_url;
       const put = (el, v) => { el.textContent = `Match to you ${fmt(v)} · ${v >= r.threshold ? "reads as you" : "reads as someone else"}`; el.className = v >= r.threshold ? "bad" : "ok"; };
