@@ -141,3 +141,13 @@ tests/      alignment vs. a reference crop, gradient reaches the raw waveform
 ```
 
 Dependencies are listed and justified line by line in `requirements.txt`.
+
+## License and credits
+
+Shroud's own code is MIT licensed (see `LICENSE`). It does not include any model weights; `scripts/setup.sh`
+downloads them from their authors, under their terms:
+
+- **inswapper_128** and **ArcFace w600k_r50** (InsightFace): released for non-commercial research use only.
+  Shroud uses them to measure and attack identity extraction, and in the attack lab to test its own output.
+- **FaceNet / MTCNN** (facenet-pytorch, MIT) and **ECAPA-TDNN** (SpeechBrain, Apache 2.0).
+- Fonts in `frontend/fonts/` and `extension/fonts/`: Newsreader, IBM Plex Sans, IBM Plex Mono (SIL Open Font License).
