@@ -12,3 +12,4 @@ uvicorn                 # ASGI server
 python-multipart        # multipart uploads for FastAPI
 # facenet-pytorch is installed separately with --no-deps (it pins old torch/numpy/Pillow):
 #   pip install --no-deps facenet-pytorch==2.6.0   -> MTCNN detector + InceptionResnetV1 (vggface2)
+requests                # imported by facenet-pytorch at import time (its weight downloader); never called at runtime

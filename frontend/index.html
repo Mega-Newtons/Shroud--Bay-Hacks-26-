@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shroud — protection against deepfakes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="mock-banner" class="mock-banner" hidden>Mock data — every number on this page is simulated</div>
+
+<header class="mast wrap">
+  <a class="brand" href="#shield" aria-label="Shroud">
+    <svg id="mark" class="mark" viewBox="-20 -20 40 40" aria-hidden="true"></svg>
+    <span class="wordmark">Shroud</span>
+  </a>
+  <p id="status" class="label status">Local · connecting</p>
+</header>
+
+<main>
+
+<section id="shield" class="sec sec-hero wrap">
+  <svg id="hero-rosette" class="hero-rosette" viewBox="-110 -110 220 220" aria-hidden="true"></svg>
+  <p class="label sec-no">01 — Shield</p>
+  <div class="sec-body">
+    <h1>Your selfie shouldn&rsquo;t be a&nbsp;deepfake&nbsp;kit.</h1>
+    <p class="lede">Shroud adds an invisible layer to the photos, voice notes and videos you share, so the AI tools used to clone people pull the wrong identity.</p>
+
+    <div id="intake" class="intake">
+      <label id="drop" class="drop" tabindex="0">
+        <input id="file" type="file" accept="image/*,audio/*,video/*" hidden>
+        <span class="drop-title">Drop a photo, voice note or video</span>
+        <span class="label drop-hint">or choose a file · it never leaves this machine</span>
+      </label>
+
+      <div class="controls">
+        <div class="field">
+          <span class="label">Capture</span>
+          <div class="text-actions">
+            <button id="btn-record" class="text-btn" type="button">Record voice</button>
+            <button id="btn-webcam" class="text-btn" type="button">Use webcam</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="strength-label">Strength</span>
+          <div class="seg" role="radiogroup" aria-labelledby="strength-label">
+            <button type="button" role="radio" aria-checked="false" data-strength="light">Light</button>
+            <button type="button" role="radio" aria-checked="true" data-strength="balanced">Balanced</button>
+            <button type="button" role="radio" aria-checked="false" data-strength="strong">Strong</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Decoy identity · optional</span>
+          <div class="text-actions">
+            <label class="text-btn"><input id="decoy" type="file" accept="image/*,audio/*" hidden><span id="decoy-name">Choose a face or voice to point at</span></label>
+            <button id="decoy-clear" class="text-btn quiet" type="button" hidden>Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="webcam" class="webcam" hidden>
+      <video id="webcam-video" autoplay playsinline muted></video>
+      <div class="text-actions">
+        <button id="webcam-snap" class="text-btn" type="button">Take photo</button>
+        <button id="webcam-cancel" class="text-btn quiet" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <div id="stage" class="stage" hidden>
+      <div class="stage-media">
+        <div id="stage-preview" class="stage-preview"></div>
+        <svg id="stage-guilloche" class="stage-guilloche" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+      </div>
+      <div class="readout" aria-live="polite">
+        <span class="label" id="ro-phase">Preparing</span>
+        <p class="ro-num"><span id="ro-sim">—</span></p>
+        <span class="label">Identity match, live</span>
+        <dl class="ro-lines">
+          <div><dt>Match</dt><dd id="ro-trail">—</dd></div>
+          <div><dt>Step</dt><dd id="ro-step">—</dd></div>
+          <div><dt>Threshold</dt><dd id="ro-thr">—</dd></div>
+          <div><dt>Elapsed</dt><dd id="ro-elapsed">0.0 s</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div id="error" class="error" hidden>
+      <p id="error-text"></p>
+      <button id="error-retry" class="text-btn" type="button">Try another file</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="sec wrap">
+  <p class="label sec-no">02 — Result</p>
+  <div class="sec-body">
+    <p id="result-empty" class="empty">Nothing issued yet. Shield a file and its certificate appears here.</p>
+
+    <article id="cert" class="cert" hidden>
+      <svg id="cert-border" class="cert-border" aria-hidden="true"></svg>
+      <div class="cert-inner">
+        <header class="cert-head">
+          <div>
+            <p class="label">Shroud · issued locally</p>
+            <h2>Certificate of protection</h2>
+          </div>
+          <dl class="cert-meta">
+            <div><dt>Serial</dt><dd id="c-serial">No. 000000</dd></div>
+            <div><dt>Issued</dt><dd id="c-date">—</dd></div>
+            <div><dt>Subject</dt><dd id="c-kind">—</dd></div>
+            <div><dt>Strength</dt><dd id="c-strength">—</dd></div>
+          </dl>
+        </header>
+
+        <div class="cert-grid">
+          <div class="cert-media">
+            <div id="compare" class="compare" hidden>
+              <div id="compare-after" class="compare-layer"></div>
+              <div id="compare-before" class="compare-layer compare-top"></div>
+              <canvas id="shield-canvas" class="shield-canvas" hidden></canvas>
+              <div id="compare-handle" class="compare-handle" role="slider" tabindex="0" aria-label="Before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><span></span></div>
+              <span class="label tag tag-l">Original</span>
+              <span class="label tag tag-r">Shielded</span>
+            </div>
+            <div id="media-actions" class="text-actions media-actions" hidden>
+              <button id="btn-shield-view" class="text-btn" type="button" aria-pressed="false">Show the shield</button>
+              <button id="btn-video-play" class="text-btn" type="button" hidden>Pause</button>
+              <span class="label" id="shield-note" hidden>Difference × 20, printed in green</span>
+            </div>
+
+            <div id="waves" class="waves" hidden>
+              <div class="wave-row">
+                <div class="wave-head"><span class="label">Original</span><button class="text-btn" type="button" data-play="orig">Play</button></div>
+                <canvas id="wave-orig" class="wave"></canvas>
+              </div>
+              <div class="wave-row">
+                <div class="wave-head"><span class="label">Shielded</span><button class="text-btn" type="button" data-play="prot">Play</button></div>
+                <canvas id="wave-prot" class="wave"></canvas>
+              </div>
+              <audio id="audio-orig" preload="auto"></audio>
+              <audio id="audio-prot" preload="auto"></audio>
+            </div>
+
+            <figure id="spark" class="spark" hidden>
+              <figcaption class="label">Identity match per frame · measured on the encoded file</figcaption>
+              <svg id="spark-svg" viewBox="0 0 600 96" preserveAspectRatio="none"></svg>
+              <div class="spark-axis label"><span>Frame 1</span><span id="spark-thr">Threshold</span><span id="spark-last">—</span></div>
+            </figure>
+          </div>
+
+          <div class="cert-fields">
+            <div class="match">
+              <div class="match-cell">
+                <span class="label">Match before</span>
+                <span id="c-before" class="numeral">—</span>
+              </div>
+              <div class="match-cell">
+                <span class="label">Match after</span>
+                <span id="c-after" class="numeral numeral-after">—</span>
+              </div>
+            </div>
+
+            <div class="scale" aria-hidden="true">
+              <div class="scale-zones label"><span id="scale-else">someone else</span><span id="scale-same">same person</span></div>
+              <div class="scale-bar">
+                <i id="scale-thr" class="scale-thr"></i>
+                <i id="scale-before" class="scale-mark scale-mark-before"></i>
+                <i id="scale-after" class="scale-mark scale-mark-after"></i>
+              </div>
+              <div class="scale-ends label"><span>0</span><span>1</span></div>
+            </div>
+
+            <p id="verdict" class="verdict"></p>
+
+            <dl id="c-fields" class="fields"></dl>
+
+            <div class="cert-actions">
+              <a id="download" class="btn" download>Download shielded file</a>
+              <button id="again" class="text-btn" type="button">Shield another</button>
+              <div id="stamp" class="stamp" aria-hidden="true"><span>Shielded</span></div>
+            </div>
+            <ul id="c-warnings" class="warnings label"></ul>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="lab" class="sec wrap">
+  <p class="label sec-no">03 — Attack lab</p>
+  <div class="sec-body">
+    <h2>We attack our own output.</h2>
+    <p class="body-copy">The same open-source face swapper is given the original photo, then the shielded one, as the identity to copy. Same target, same settings. The number under each result is how closely the fake matches the real person.</p>
+    <div class="text-actions lab-actions">
+      <button id="lab-run" class="text-btn" type="button" disabled>Run the face swap on the last photo</button>
+      <span id="lab-note" class="label">Shield a photo first</span>
+    </div>
+    <div id="lab-out" class="lab-out" hidden>
+      <figure><div class="lab-img"><img id="lab-target" alt="Target face"></div><figcaption class="label">Target<br><b>the face being replaced</b></figcaption></figure>
+      <figure><div class="lab-img"><img id="lab-a" alt="Deepfake made from the original photo"></div><figcaption class="label">Deepfake from original<br><b id="lab-a-sim">—</b></figcaption></figure>
+      <figure><div class="lab-img"><img id="lab-b" alt="Deepfake made from the shielded photo"></div><figcaption class="label">Deepfake from shielded<br><b id="lab-b-sim">—</b></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="sec wrap">
+  <p class="label sec-no">04 — How it works</p>
+  <div class="sec-body">
+    <ol class="how">
+      <li><span class="label">01</span><p>We measure the fingerprint AI models take from your face or voice.</p></li>
+      <li><span class="label">02</span><p>We nudge your file, invisibly, until that fingerprint points somewhere else.</p></li>
+      <li><span class="label">03</span><p>Clone and swap tools built on those models get the wrong person.</p></li>
+    </ol>
+    <div class="limits">
+      <span class="label">Limits, plainly</span>
+      <p>Shroud is tested against the specific open models it runs here: ArcFace and FaceNet for faces, ECAPA for voices. Tools built on them are affected most; others, including commercial services, may be affected less or not at all. Heavy compression, denoising or deliberate clean-up can wear the layer down. It makes cloning you more expensive. It does not make it impossible.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot wrap">
+  <span class="label">Shroud · runs entirely on this machine · no uploads, no accounts</span>
+  <span class="label" id="foot-models"></span>
+</footer>
+
+<script src="guilloche.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
