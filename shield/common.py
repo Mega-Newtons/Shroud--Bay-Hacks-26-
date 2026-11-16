@@ -1,4 +1,5 @@
 """Shared pieces: device pick, strength table, quality metrics, EOT transforms, ffmpeg helpers. Torch + stdlib only."""
+import os
 import json
 import math
 import subprocess
@@ -11,10 +12,23 @@ ROOT = Path(__file__).resolve().parent.parent
 MODELS = ROOT / "models"
 
 # --- device: picked once -----------------------------------------------------------------------------------------
-if torch.cuda.is_available():
+def _cuda_works() -> bool:
+    """is_available() is true even when this torch build has no kernels for the card (e.g. a GPU newer than the
+    build). Run one tiny convolution to find out, and fall back to CPU instead of failing every job."""
+    if os.environ.get("SHROUD_DEVICE", "").lower() == "cpu" or not torch.cuda.is_available():
+        return False
+    try:
+        F.conv2d(torch.zeros(1, 1, 8, 8, device="cuda"), torch.zeros(1, 1, 3, 3, device="cuda")).sum().item()
+        return True
+    except Exception as e:  # noqa: BLE001
+        print(f"[shroud] GPU found but unusable with this PyTorch build ({str(e).splitlines()[0]}); using CPU.")
+        return False
+
+
+if _cuda_works():
     DEVICE = torch.device("cuda")
     torch.backends.cudnn.benchmark = True
-elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+elif os.environ.get("SHROUD_DEVICE", "").lower() != "cpu" and getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
     DEVICE = torch.device("mps")
 else:
     DEVICE = torch.device("cpu")
